@@ -11,7 +11,6 @@ RSpec.describe Item do
         expect(item1).to be_a(Item)
         expect(item1.name).to eq('Chalkware Piggy Bank')
         expect(item1.bids).to eq({})
-        expect(item1.bidding).to eq(true)
     end
 
     it 'can add bids to items' do 

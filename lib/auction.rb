@@ -23,19 +23,29 @@ attr_reader :items
     end
     
     def bidders
-        items.flat_map { |item| item.bids.keys.map { |attributes| attributes.name }}.uniq
+        # items.flat_map { |item| item.bids.keys.map { |attributes| attributes.name }}.uniq #doesn't work if you have more than one person with the same name, can solve by iterating over objects, rather than names - call uniq on item.bids.keys instead of name
+        attendees = @items.flat_map { |item| item.bids.keys }.uniq
+        attendees.map { |attendee| attendee.name }
     end
 
     def bidder_info
-        bidders_info = {}
-        attendees = items.find_all { |item| item.bids != {} } 
-        attendees.each do |attendee|
-            bidders_info[attendee.bids] = {budget:0, items: []}
+        bidders_stats = {}
+        # attendees = items.find_all { |item| item.bids != {} } 
+        # attendees.each do |attendee|
+        #     bidders_info[attendee.bids] = {budget:0, items: []}
+        # end
+        items.each do |item|
+            item.bids.keys.each do |attendee|
+                if !bidders_stats.include?(attendee)
+                    bidders_stats[attendee] = {
+                        :budget => attendee.budget,
+                        :items => [item]
+                    }
+                else
+                    bidders_stats[attendee][:items] << item
+                end
+            end
         end
-        
-        # budget = 0
-        # items.each { |item| item.bids.map { |key, value| budget = key.budget }}
-        # # bidders_info[attendees] = {budget: budget, items: []} #has a stagnating budget - only returning last budget
-        # require 'pry'; binding.pry
+        bidders_stats
     end
 end
